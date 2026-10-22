@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { LocaleProvider } from './i18n/provider'
 import { ToastProvider } from './components/ToastContext'
 import Layout from './components/Layout'
@@ -29,7 +29,44 @@ import {
   ConfirmSourceStep,
 } from './pages/connect-source/ConnectSourceWizard'
 
+const router = createBrowserRouter([
+  { path: '/', element: <Landing /> },
+  { path: '/login', element: <Login /> },
+  { path: '/signup', element: <Signup /> },
+  { path: '/forgot-password', element: <ForgotPassword /> },
+  { path: '/onboarding', element: <OnboardingWizard /> },
+  { path: '/500', element: <ServerError /> },
+  {
+    element: <Layout />,
+    children: [
+      { path: 'dashboard', element: <Dashboard /> },
+      { path: 'attestations', element: <Attestations /> },
+      { path: 'attestations/:id', element: <AttestationDetail /> },
+      { path: 'sources', element: <RevenueSources /> },
+      { path: 'settings', element: <Settings /> },
+      { path: 'api-keys', element: <ApiKeys /> },
+      { path: 'help', element: <HelpArticle /> },
+      { path: 'consent-preferences', element: <ConsentPreferences /> },
+      {
+        path: 'connect-source',
+        element: <ConnectSourceWizard />,
+        children: [
+          { path: 'provider', element: <SelectSourceProviderStep /> },
+          { path: 'authorize', element: <AuthorizeSourceStep /> },
+          { path: 'callback', element: <OAuthCallbackLandingStep /> },
+          { path: 'scope', element: <ConfigureSourceScopeStep /> },
+          { path: 'mapping', element: <MapCurrenciesStep /> },
+          { path: 'confirm', element: <ConfirmSourceStep /> },
+        ],
+      },
+    ],
+  },
+  { path: '*', element: <NotFound /> },
+], {
+  future: { v7_relativeSplatPath: true },
+})
 
+/** Production entry point — wraps AppRoutes in BrowserRouter + providers. */
 export default function App() {
   return (
     <LocaleProvider>
